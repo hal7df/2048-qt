@@ -205,11 +205,7 @@ Rectangle {
             }
         }
 
-        onPressAndHold: {
-            initX = 0;
-            initY = 0;
-            gameMenu.open = !gameMenu.open;
-        }
+        onPressAndHold: gameMenu.open = !gameMenu.open;
 
         onReleased: {
             var xdiff, ydiff;
