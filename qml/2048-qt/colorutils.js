@@ -47,5 +47,5 @@ function getBackgroundColor (value) {
 function getContrasting (hex)
 {
     var num = hex.substr(1);
-    return (parseInt(num, 16) > 0xffffff/2) ? "#000000" : "#ffffff";
+    return (parseInt(num, 16) > 0xffffff/2) ? "#ffffff" : "#000000";
 }
