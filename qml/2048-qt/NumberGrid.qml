@@ -136,13 +136,16 @@ Rectangle {
         }
     }
 
-    /*
     MultiPointTouchArea {
         id: gestureMover
 
         property bool actionCompleted: false
 
+        anchors.fill: parent
+
         maximumTouchPoints: 1
+        enabled: !gameChangeDisplay.visible
+        focus: true
 
         onUpdated: {
             if (!actionCompleted)
@@ -182,63 +185,6 @@ Rectangle {
         }
 
         onReleased: actionCompleted = false
-    }
-    */
-
-    MouseArea {
-        id: moveTiles
-
-        property int initX: 0
-        property int initY: 0
-
-        anchors.fill: parent
-
-        focus: true
-        enabled: !gameChangeDisplay.visible
-
-        onPressed: {
-            if (initX == 0 && initY == 0)
-            {
-                initX = mouse.x;
-                initY = mouse.y;
-                mouse.accepted = true;
-            }
-        }
-
-        onPressAndHold: gameMenu.open = !gameMenu.open;
-
-        onReleased: {
-            var xdiff, ydiff;
-
-            xdiff = mouse.x - initX;
-            ydiff = mouse.y - initY;
-
-            if (Math.abs(xdiff) > Math.abs(ydiff))
-            {
-                if (xdiff > 20)
-                {
-                    numberGrid.moveRight();
-                }
-                else if (xdiff < -20)
-                {
-                    numberGrid.moveLeft();
-                }
-            }
-            else if (Math.abs(ydiff) > Math.abs(xdiff)+10)
-            {
-                if (ydiff > 20)
-                {
-                    numberGrid.moveDown();
-                }
-                else if (ydiff < -20)
-                {
-                    numberGrid.moveUp();
-                }
-            }
-
-            initX = 0;
-            initY = 0;
-        }
 
         Keys.onPressed: {
 
