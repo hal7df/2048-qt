@@ -61,6 +61,8 @@ Rectangle {
 
         verticalLayoutDirection: GridView.BottomToTop
 
+        Component.onCompleted: forceLayout()
+
         delegate: Rectangle {
 
             width: playGrid.cellWidth
@@ -157,28 +159,28 @@ Rectangle {
 
                 if (Math.abs(xdiff) > Math.abs(ydiff))
                 {
-                    if (xdiff > 20)
+                    if (xdiff > 30)
                     {
+                        actionCompleted = true;
                         numberGrid.moveRight();
-                        actionCompleted = true;
                     }
-                    else if (xdiff < -20)
+                    else if (xdiff < -30)
                     {
-                        numberGrid.moveLeft();
                         actionCompleted = true;
+                        numberGrid.moveLeft();
                     }
                 }
                 else if (Math.abs(xdiff) < Math.abs(ydiff))
                 {
-                    if (ydiff > 20)
+                    if (ydiff > 30)
                     {
+                        actionCompleted = true;
                         numberGrid.moveDown();
-                        actionCompleted = true;
                     }
-                    else if (ydiff < -20)
+                    else if (ydiff < -30)
                     {
-                        numberGrid.moveUp();
                         actionCompleted = true;
+                        numberGrid.moveUp();
                     }
                 }
             }
@@ -297,6 +299,8 @@ Rectangle {
             }
         }
 
+        console.log("First move up completed");
+
         //Merge tiles
         for (x = 0; x < 4; x++)
         {
@@ -313,6 +317,8 @@ Rectangle {
                 }
             }
         }
+
+        console.log("Merge completed.");
 
         //Move everything up again
         for (x = 0; x < 4; x++)
@@ -331,8 +337,12 @@ Rectangle {
             }
         }
 
+        console.log("Second move up completed.");
+
         if (tileMoved)
             afterMove();
+
+        console.log("Move completed.");
     }
     function moveDown ()
     {
@@ -361,6 +371,8 @@ Rectangle {
             }
         }
 
+        console.log("First move complete");
+
         //Merge tiles
         for (x = 0; x < 4; x++)
         {
@@ -377,6 +389,8 @@ Rectangle {
                 }
             }
         }
+
+        console.log("Merge complete");
 
         //Move everything down again
         for (x = 0; x < 4; x++)
@@ -395,8 +409,12 @@ Rectangle {
             }
         }
 
+        console.log("Second move complete");
+
         if (tileMoved)
             afterMove();
+
+        console.log("Move finished");
     }
 
     function moveRight ()
@@ -426,6 +444,8 @@ Rectangle {
             }
         }
 
+        console.log("First move complete");
+
         //Merge tiles
         for (y = 0; y < 4; y++)
         {
@@ -442,6 +462,8 @@ Rectangle {
                 }
             }
         }
+
+        console.log("Merge complete");
 
         //Move everything down again
         for (y = 0; y < 4; y++)
@@ -460,8 +482,12 @@ Rectangle {
             }
         }
 
+        console.log("Second move complete");
+
         if (tileMoved)
             afterMove();
+
+        console.log("Move finished");
     }
 
     function moveLeft ()
@@ -491,6 +517,8 @@ Rectangle {
             }
         }
 
+        console.log("First move complete");
+
         //Merge tiles
         for (y = 0; y < 4; y++)
         {
@@ -507,6 +535,8 @@ Rectangle {
                 }
             }
         }
+
+        console.log("Merge complete");
 
         //Move everything down again
         for (y = 0; y < 4; y++)
@@ -525,8 +555,12 @@ Rectangle {
             }
         }
 
+        console.log("Second move complete");
+
         if (tileMoved)
             afterMove();
+
+        console.log("Move finished");
     }
 
     /** MISCELLANEOUS FUNCTIONS **/

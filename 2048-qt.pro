@@ -14,7 +14,9 @@ DEFINES -= \
 DEFINES += \
     QT_NO_OPENGL
 # The .cpp file which was generated for your project. Feel free to hack it.
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    gamemodel.cpp \
+    gametile.cpp
 
 # Installation path
 # target.path =
@@ -27,3 +29,7 @@ ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 OTHER_FILES += \
     android/AndroidManifest.xml
+
+HEADERS += \
+   gamemodel.h \
+   gametile.h
