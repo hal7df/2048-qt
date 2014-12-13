@@ -109,7 +109,7 @@ Rectangle {
             anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; margins: 5 }
 
             text: "SCORE"
-            font.pointSize: parent.height/8
+            font.pixelSize: parent.height/5
             font.bold: true
 
             color: "#ffffff"
@@ -121,7 +121,7 @@ Rectangle {
             anchors { top: scoreLabel.bottom; horizontalCenter: parent.horizontalCenter; margins: 5 }
 
             text: scoreContain.score
-            font.pointSize: (parent.height - (scoreLabel.height + 5))/2
+            font.pixelSize: (parent.height - (scoreLabel.height + 5))*0.75
             font.weight: Font.Light
 
             color: "#ffffff"
