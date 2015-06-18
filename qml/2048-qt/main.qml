@@ -7,10 +7,7 @@ Rectangle {
     width: 450
     height: 700
 
-    gradient: Gradient {
-        GradientStop { position: 0.0; color: "#000407" }
-        GradientStop { position: 1.0; color: "#1f2827" }
-    }
+    color: "#cecece"
 
     Item {
         id: goalContain
@@ -27,7 +24,7 @@ Rectangle {
 
             font.pixelSize: parent.height/2
             font.weight: Font.Light
-            color: "#ffffff"
+            color: "#000000"
 
             anchors.centerIn: parent
         }
@@ -112,7 +109,7 @@ Rectangle {
             font.pixelSize: parent.height/5
             font.bold: true
 
-            color: "#ffffff"
+            color: "#000000"
         }
 
         Text {
@@ -124,7 +121,7 @@ Rectangle {
             font.pixelSize: (parent.height - (scoreLabel.height + 5))*0.75
             font.weight: Font.Light
 
-            color: "#ffffff"
+            color: "#000000"
         }
     }
 }

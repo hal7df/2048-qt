@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 1.1
 import "colorutils.js" as ColorUtils
 
-Rectangle {
+Card {
     id: numberGrid
 
     property alias model: playGrid.model
@@ -16,11 +16,10 @@ Rectangle {
 
     height: width
 
-    color: "#22ffffff"
-
     anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter }
 
     clip: true
+    mainCard: true
 
     onLoss: {
         gameChangeDisplay.opacity = 1.0;
@@ -61,37 +60,14 @@ Rectangle {
 
         verticalLayoutDirection: GridView.BottomToTop
 
-        Component.onCompleted: forceLayout()
+        Component.onCompleted: playGrid.forceLayout()
 
-        delegate: Rectangle {
+        delegate: GridDelegate {
 
             width: playGrid.cellWidth
             height: playGrid.cellHeight
 
-            color: ColorUtils.getBackgroundColor(value)
-
-            Behavior on color {
-                ColorAnimation { easing.type: Easing.InOutQuad }
-            }
-
-            Text {
-                anchors.centerIn: parent
-
-                text: value != 0 ? value : ""
-                font.pixelSize: parent.height/2
-                font.weight: Font.Light
-
-                horizontalAlignment: Text.AlignHCenter
-
-                width: parent.width - 4
-                scale: paintedWidth > width ? (width/paintedWidth) : 1
-
-                color: ColorUtils.getTextColor(value)
-
-                Behavior on color {
-                    ColorAnimation { easing.type: Easing.InOutQuad }
-                }
-            }
+            number: value
         }
     }
 
