@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.4
 import "colorutils.js" as ColorUtils
 
 Card {
@@ -12,23 +12,21 @@ Card {
 
     color: ColorUtils.getBackgroundColor(number)
 
-    onVisibleChanged: console.log(visible)
-    onColorChanged: console.log(color)
-
     Text {
         anchors.centerIn: parent
         width: 0.8*parent.width
 
-        color: ColorUtils.getTextColor(parent.number)
+        color: ColorUtils.getTextColor(gridDelegate.number)
+        visible: gridDelegate.shadowVisible
 
-        text: parent.number != 0 ? number : ""
+        text: gridDelegate.number != 0 ? gridDelegate.number : ""
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 0.45*parent.height
 
         scale: paintedWidth > width ? (width/paintedWidth) : 1
 
         Behavior on color {
-            ColorAnimation { duration: gridDelegate.shadowVisible ? 250 : 0; easing.type: Easing.InOutQuad }
+            ColorAnimation { easing.type: Easing.InOutQuad }
         }
     }
 }

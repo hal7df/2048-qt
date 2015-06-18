@@ -46,7 +46,9 @@ function getBackgroundColor (value) {
 
 function getContrasting (hex)
 {
-    var num = hex.substr(1);
+    var num = hex.toString();
+    num = num.substring(1);
+
     var r = parseInt(num.substr(0,2),16);
     var g = parseInt(num.substr(2,2),16);
     var b = parseInt(num.substr(4,2),16);

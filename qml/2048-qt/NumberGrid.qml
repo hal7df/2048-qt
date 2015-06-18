@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.4
 import QtQuick.Controls 1.1
 import "colorutils.js" as ColorUtils
 
@@ -63,7 +63,6 @@ Card {
         Component.onCompleted: playGrid.forceLayout()
 
         delegate: GridDelegate {
-
             width: playGrid.cellWidth
             height: playGrid.cellHeight
 
@@ -255,8 +254,6 @@ Card {
 
         tileMoved = false;
 
-        console.log("Move up event triggered");
-
         //Move everything up
         for (x = 0; x < 4; x++)
         {
@@ -275,8 +272,6 @@ Card {
             }
         }
 
-        console.log("First move up completed");
-
         //Merge tiles
         for (x = 0; x < 4; x++)
         {
@@ -293,8 +288,6 @@ Card {
                 }
             }
         }
-
-        console.log("Merge completed.");
 
         //Move everything up again
         for (x = 0; x < 4; x++)
@@ -313,12 +306,8 @@ Card {
             }
         }
 
-        console.log("Second move up completed.");
-
         if (tileMoved)
             afterMove();
-
-        console.log("Move completed.");
     }
     function moveDown ()
     {
@@ -326,8 +315,6 @@ Card {
         var tileMoved;
 
         tileMoved = false;
-
-        console.log("Move down event triggered");
 
         //Move everything down
         for (x = 0; x < 4; x++)
@@ -347,8 +334,6 @@ Card {
             }
         }
 
-        console.log("First move complete");
-
         //Merge tiles
         for (x = 0; x < 4; x++)
         {
@@ -365,8 +350,6 @@ Card {
                 }
             }
         }
-
-        console.log("Merge complete");
 
         //Move everything down again
         for (x = 0; x < 4; x++)
@@ -385,12 +368,8 @@ Card {
             }
         }
 
-        console.log("Second move complete");
-
         if (tileMoved)
             afterMove();
-
-        console.log("Move finished");
     }
 
     function moveRight ()
@@ -399,8 +378,6 @@ Card {
         var tileMoved;
 
         tileMoved = false;
-
-        console.log("Move right event triggered");
 
         //Move everything right
         for (y = 0; y < 4; y++)
@@ -420,8 +397,6 @@ Card {
             }
         }
 
-        console.log("First move complete");
-
         //Merge tiles
         for (y = 0; y < 4; y++)
         {
@@ -438,8 +413,6 @@ Card {
                 }
             }
         }
-
-        console.log("Merge complete");
 
         //Move everything down again
         for (y = 0; y < 4; y++)
@@ -458,12 +431,8 @@ Card {
             }
         }
 
-        console.log("Second move complete");
-
         if (tileMoved)
             afterMove();
-
-        console.log("Move finished");
     }
 
     function moveLeft ()
@@ -472,8 +441,6 @@ Card {
         var tileMoved;
 
         tileMoved = false;
-
-        console.log("Move left event triggered");
 
         //Move everything right
         for (y = 0; y < 4; y++)
@@ -493,8 +460,6 @@ Card {
             }
         }
 
-        console.log("First move complete");
-
         //Merge tiles
         for (y = 0; y < 4; y++)
         {
@@ -511,8 +476,6 @@ Card {
                 }
             }
         }
-
-        console.log("Merge complete");
 
         //Move everything down again
         for (y = 0; y < 4; y++)
@@ -531,12 +494,8 @@ Card {
             }
         }
 
-        console.log("Second move complete");
-
         if (tileMoved)
             afterMove();
-
-        console.log("Move finished");
     }
 
     /** MISCELLANEOUS FUNCTIONS **/
