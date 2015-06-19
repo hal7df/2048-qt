@@ -53,6 +53,6 @@ function getContrasting (hex)
     var g = parseInt(num.substr(2,2),16);
     var b = parseInt(num.substr(4,2),16);
     var yiq = ((r*299)+(g*587)+(b*114))/1000;
-    return (yiq >= 128) ? "#000000" : "#ffffff";
+    return (yiq >= 128) ? "black" : "white";
 }
 

@@ -9,6 +9,7 @@ Item {
     property int power: 11
 
     property bool canDecreasePower
+    property bool gameActive
 
     anchors {
         top: parent.top
@@ -55,7 +56,7 @@ Item {
         z: 10
 
         small: true
-        enabled: parent.power > 7 && parent.canDecreasePower
+        enabled: (parent.power > 7 && parent.canDecreasePower && parent.gameActive)
         iconName: "decrease"
 
         onClicked: parent.power--
@@ -72,8 +73,8 @@ Item {
         z: 11
 
         small: true
-        enabled: parent.power <  14
-        iconName: "increase"
+        enabled: (parent.power <  14 & parent.gameActive)
+        iconName: "increase-white"
 
         onClicked: parent.power++
     }

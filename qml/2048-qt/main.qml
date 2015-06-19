@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Window 2.0
-import QtQuick.Controls 1.1
+import QtGraphicalEffects 1.0
+import Qt.labs.settings 1.0
 import "colorutils.js" as ColorUtils
 
 Rectangle {
@@ -20,48 +21,169 @@ Rectangle {
         }
 
         canDecreasePower: numGrid.canDecreasePower
+        gameActive: numGrid.active
     }
 
     NumberGrid {
         id: numGrid
 
+        z: 30
+
         goal: goalDisplay.goal
+        useSquares: settings.useSquares
 
         onAddScore: scoreContain.score += diff
-        onRestart: scoreContain.score = 0
+
+        onRestart: {
+            restartGame.returnToPlace();
+            scoreContain.score = 0;
+        }
+        onContinueGame: {
+            goalDisplay.power++;
+            restartGame.returnToPlace();
+        }
+
+        onWin: {
+            restartGame.x = ((parent.width/2) - (restartGame.width/2));
+            restartGame.y = (5*parent.height)/8;
+        }
+
+        onLoss: {
+            restartGame.x = ((parent.width/2)-(restartGame.width/2))
+            restartGame.y = parent.height/2
+        }
     }
 
-    Item {
+    ScoreDisplay {
         id: scoreContain
 
-        property int score: 0
+        anchors {
+            top: numGrid.bottom
+            topMargin: -Screen.desktopAvailableHeight/180
+        }
 
-        anchors { top: numGrid.bottom; right: parent.right; left: parent.left; bottom: parent.bottom; margins: 10 }
+        width: 0.75*parent.width
 
-        width: parent.width
+        curHighTile: numGrid.highestNumber
 
-        Text {
-            id: scoreLabel
+        onSaveScore: {
+            if (scoreContain.highscore > settings.highscore)
+                settings.highscore = scoreContain.highscore;
+            if (scoreContain.highTile > settings.highTile)
+                settings.highTile = scoreContain.highTile;
+        }
 
-            anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; margins: 5 }
+        Component.onCompleted: {
+            highscore = settings.highscore;
+            highTile = settings.highTile;
+        }
 
-            text: "SCORE"
-            font.pixelSize: parent.height/5
-            font.bold: true
+        Component.onDestruction: {
+            if (scoreContain.highscore > settings.highscore)
+                settings.highscore = scoreContain.highscore;
+            if (scoreContain.highTile > settings.highTile)
+                settings.highTile = scoreContain.highTile;
+        }
+    }
 
-            color: "#000000"
+    Rectangle {
+        id: changeTiles
+
+        anchors {
+            right: scoreContain.right
+            verticalCenter: scoreContain.verticalCenter
+            verticalCenterOffset: -scoreContain.height/6
+        }
+
+        height: scoreContain.height/2.5
+        width: height
+        radius: settings.useSquares ? Screen.desktopAvailableHeight/320 : width/2
+
+        color: ColorUtils.getBackgroundColor(goalDisplay.goal)
+
+        states: State {
+            name: "pressed"; when: changeTilesArea.pressed
+            PropertyChanges { target: changeTiles; color: Qt.darker(ColorUtils.getBackgroundColor(goalDisplay.goal), 1.5) }
+        }
+
+        transitions: Transition {
+            from: ""; to: "pressed"; reversible: true
+            ColorAnimation { duration: 50 }
+        }
+
+        Behavior on radius {
+            PropertyAnimation { easing.type: Easing.InOutQuad }
+        }
+
+        Behavior on color {
+            enabled: state != "pressed"
+            ColorAnimation { easing.type: Easing.InOutQuad }
         }
 
         Text {
-            id: scoreDisplay
+            anchors.centerIn: parent
 
-            anchors { top: scoreLabel.bottom; horizontalCenter: parent.horizontalCenter; margins: 5 }
+            color: ColorUtils.getTextColor(goalDisplay.goal)
 
-            text: scoreContain.score
-            font.pixelSize: (parent.height - (scoreLabel.height + 5))*0.75
-            font.weight: Font.Light
+            font.pixelSize: (2*parent.height)/3
 
-            color: "#000000"
+            text: "#"
         }
+
+        MouseArea {
+            id: changeTilesArea
+
+            anchors.fill: parent
+
+            onClicked: settings.useSquares = !settings.useSquares
+        }
+    }
+
+    DropShadow {
+        source: changeTiles
+        anchors.fill: changeTiles
+
+        radius: 8
+        samples: 16
+        smooth: true
+        transparentBorder: true
+        color: "#33000000"
+
+        verticalOffset: changeTiles.height/15
+    }
+
+    FloatingActionButton {
+        id: restartGame
+
+        x: parent.width-width
+        y: parent.height-height
+        z: 50
+
+        color: ColorUtils.getBackgroundColor(goalDisplay.goal)
+        iconName: "reset-"+ColorUtils.getTextColor(goalDisplay.goal)
+
+        onClicked: numGrid.resetGame()
+
+        Behavior on x {
+            PropertyAnimation { duration: 500; easing.type: Easing.InOutQuad }
+        }
+
+        Behavior on y {
+            PropertyAnimation { duration: 500; easing.type: Easing.InOutQuad }
+        }
+
+        function returnToPlace ()
+        {
+            x = parent.width - width
+            y = parent.height - height
+        }
+    }
+
+    Settings {
+        id: settings
+
+        property int highscore: 0
+        property int highTile: 2
+        property bool useSquares: false
     }
 }

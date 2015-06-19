@@ -7,11 +7,16 @@ Card {
 
     property alias model: playGrid.model
     property int goal
+    property int highestNumber: 2
     property bool canDecreasePower: !model.doesTileExist(goal/2)
+    property bool active: !gameChangeDisplay.visible
+
+    property bool useSquares
 
     signal loss
     signal win
     signal restart
+    signal continueGame
     signal addScore (int diff)
 
     height: width
@@ -21,24 +26,13 @@ Card {
     clip: true
     mainCard: true
 
-    onLoss: {
-        gameChangeDisplay.opacity = 1.0;
-        gameChangeLabel.text = "You lost!";
-        gameMenu.open = true;
-    }
+    onLoss: gameChangeDisplay.open("You lost!")
 
     onWin: {
-        gameChangeDisplay.opacity = 1.0;
-        gameChangeLabel.text = "You won!";
-        gameMenu.open = true;
-    }
+        gameChangeDisplay.open("You won!");
 
-    onGoalChanged: {
-        if (!model.doesTileExist(goal))
-        {
-            gameChangeDisplay.opacity = 0.0;
-            gameMenu.open = false;
-        }
+        if (goal < 16384)
+            goNextPower.state = "open";
     }
 
     GridView
@@ -67,6 +61,7 @@ Card {
             height: playGrid.cellHeight
 
             number: value
+            useSquares: numberGrid.useSquares
         }
     }
 
@@ -75,41 +70,121 @@ Card {
 
         anchors.fill: parent
 
-        radius: parent.radius
-        color: "#cccccc"
-        opacity: 0.0
+        radius: width/2
+        color: "#99555555"
+        scale: 0
 
-        Behavior on opacity {
-            NumberAnimation { duration: 1000 }
-        }
-
-        visible: opacity != 0.0
-
-        onVisibleChanged: {
-            if (visible)
-            {
-                opacity = 0.5;
-
-                if (scoreContain.loss)
-                    gameChangeLabel.text = "You lost!";
-
-                if (scoreContain.win)
-                    gameChangeLabel.text = "You won!";
-            }
-            else
-            {
-                opacity = 0.0;
-            }
-        }
+        visible: false
+        clip: true
 
         Text {
             id: gameChangeLabel
 
-            anchors.centerIn: parent
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.horizontalCenter
+                topMargin: parent.height/5
+            }
 
             text: ""
+            opacity: 0.0
 
             font.pixelSize: parent.height/6
+        }
+
+        FloatingActionButton {
+            id: goNextPower
+
+            anchors {
+                centerIn: parent
+                verticalCenterOffset: height/5
+            }
+
+            visible: scale != 0.0
+            scale: 0.0
+
+            color: {
+                var power;
+                power = (Math.log(numberGrid.goal)/Math.log(2))
+                power++;
+
+                return ColorUtils.getBackgroundColor(Math.pow(2,power));
+            }
+
+            iconName: "increase-"+ColorUtils.getContrasting(color)
+
+            onClicked: {
+                gameChangeDisplay.close();
+                numberGrid.continueGame();
+            }
+
+            states: State {
+                name: "open"
+                PropertyChanges { target: goNextPower; scale: 1.0 }
+            }
+
+            Behavior on scale {
+                NumberAnimation { easing.type: Easing.InOutQuad }
+            }
+        }
+
+        SequentialAnimation {
+            id: openDisplay
+
+            ScriptAction {
+                script: {
+                    gameChangeDisplay.radius = gameChangeDisplay.width/2
+                    gameChangeDisplay.scale = 0;
+                    gameChangeDisplay.visible = true;
+                    gameChangeLabel.opacity = 0.0;
+                }
+            }
+            NumberAnimation { target: gameChangeDisplay; property: "scale"; to: 1.0; easing.type: Easing.InQuad }
+            ParallelAnimation {
+                PropertyAnimation { target: gameChangeDisplay; property: "radius"; to: 0; easing.type: Easing.OutQuad }
+                NumberAnimation { target: gameChangeLabel; property: "opacity"; to: 1.0 }
+            }
+            ScriptAction {
+                script: {
+                    gestureMover.focus = true;
+                }
+            }
+        }
+
+        SequentialAnimation {
+            id: closeDisplay
+
+            ScriptAction {
+                script: {
+                    gameChangeDisplay.radius = 0;
+                    gameChangeDisplay.scale = 1.0;
+                    gameChangeLabel.opacity = 1.0;
+                }
+            }
+            ParallelAnimation {
+                PropertyAnimation { target: gameChangeDisplay; property: "radius"; to: gameChangeDisplay.width/2; easing.type: Easing.InQuad }
+                NumberAnimation { target: gameChangeLabel; property: "opacity"; to: 0.0 }
+            }
+            NumberAnimation { target: gameChangeDisplay; property: "scale"; to: 0.0; easing.type: Easing.OutQuad }
+            ScriptAction {
+                script: {
+                    gameChangeDisplay.visible = false;
+                    goNextPower.state = "";
+                    numberGrid.highestNumber = 2;
+                }
+            }
+        }
+
+
+        function open (text)
+        {
+            gameChangeLabel.text = text;
+            openDisplay.start();
+        }
+
+        function close ()
+        {
+            closeDisplay.start();
         }
     }
 
@@ -123,6 +198,13 @@ Card {
         maximumTouchPoints: 1
         enabled: !gameChangeDisplay.visible
         focus: true
+
+        onFocusChanged: {
+            if (focus)
+                console.log("Gesture area gaining focus");
+            else
+                console.log("Gesture area losing focus");
+        }
 
         onUpdated: {
             if (!actionCompleted)
@@ -164,8 +246,13 @@ Card {
         onReleased: actionCompleted = false
 
         Keys.onPressed: {
-
-            if (!gameChangeDisplay.visible)
+            if (event.key == Qt.Key_R)
+            {
+                console.log("Resetting game...");
+                numberGrid.resetGame();
+                event.accepted = true;
+            }
+            else if (!gameChangeDisplay.visible)
             {
                 event.accepted = true;
 
@@ -179,6 +266,7 @@ Card {
                     numberGrid.moveLeft();
                 else if (event.key == Qt.Key_R)
                 {
+                    console.log("Resetting game...");
                     numberGrid.resetGame();
                 }
 
@@ -187,62 +275,15 @@ Card {
                     event.accepted = false;
                 }
             }
-            else
-            {
-
-                if (event.key == Qt.Key_R)
-                {
-                    numberGrid.resetGame();
-                    event.accepted = true;
-                }
-                event.accepted = false;
-            }
-        }
-    }
-
-    Item {
-        id: gameMenu
-
-        property bool open: false
-
-        anchors { left: parent.left; right: parent.right }
-
-        height: parent.height/4
-        y: open ? parent.height-height : parent.height
-
-        Behavior on y {
-            NumberAnimation { easing.type: Easing.InOutQuad }
-        }
-
-        ToolButton {
-            id: resetButton
-
-            property string iconSize: {
-                if (height < 48)
-                    return "mdpi";
-                else if (height >= 48 && height < 64)
-                    return "hdpi";
-                else if (height >= 64)
-                    return "xhdpi";
-            }
-
-            anchors { top: parent.top; bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; margins: 2 }
-
-            width: height
-
-            iconSource: "images/"+iconSize+"/ic_reset.png"
-            onClicked: {
-                parent.open = false;
-                numberGrid.resetGame();
-            }
         }
     }
 
     function resetGame()
     {
         gameData.regenerate();
-        gameChangeDisplay.opacity = 0.0;
+        gameChangeDisplay.close();
         restart();
+        lost = false;
     }
 
     /** MOVE FUNCTIONS **/
@@ -505,23 +546,32 @@ Card {
         gameData.generate();
 
         var movesLeft;
+        var i;
+        var highTile;
 
         movesLeft = false;
 
-        for (var i = 0; i < 16; i++)
+        for (i = 0; i < 16; i++)
         {
             if (gameData.validMovesLeft(i))
                 movesLeft = true;
         }
-
-        if (gameMenu.open)
-            gameMenu.open = false;
 
         if (!movesLeft)
             numberGrid.loss();
 
         if (gameData.doesTileExist(numberGrid.goal))
             numberGrid.win();
+
+        highTile = 2;
+
+        for (i = 0; i < 16; i++)
+        {
+            if (gameData.get(i).value > highTile)
+                highTile = gameData.get(i).value;
+        }
+
+        highestNumber = highTile;
     }
 }
 

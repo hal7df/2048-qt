@@ -8,7 +8,7 @@ Item {
 
     property string iconName
     property bool small: false
-    property alias color: fab.color
+    property color color: "#f44336"
     property alias enabled: fabTouch.enabled
 
     signal clicked
@@ -26,16 +26,21 @@ Item {
 
         radius: height/2
 
-        color: "#f44336"
+        color: parent.color
 
         states: State {
             name: "pressed"; when: fabTouch.pressed
-            PropertyChanges { target: fab; color: "#c62828" }
+            PropertyChanges { target: fab; color: Qt.darker(fabContain.color, 1.5) }
         }
 
         transitions: Transition {
             from: ""; to: "pressed"; reversible: true
             ColorAnimation { duration: 50 }
+        }
+
+        Behavior on color {
+            enabled: state != "pressed"
+            ColorAnimation { easing.type: Easing.InOutQuad }
         }
 
         RippleTouchArea {
