@@ -11,6 +11,7 @@ Rectangle {
     height: 700
 
     color: "#cecece"
+    clip: true
 
     GoalDisplay {
         id: goalDisplay
@@ -66,23 +67,22 @@ Rectangle {
 
         curHighTile: numGrid.highestNumber
 
-        onSaveScore: {
-            if (scoreContain.highscore > settings.highscore)
-                settings.highscore = scoreContain.highscore;
-            if (scoreContain.highTile > settings.highTile)
-                settings.highTile = scoreContain.highTile;
-        }
+        onSaveScore: saveHighscore()
+        onHighscoreChanged: saveHighscore()
+        Component.onDestruction: saveHighscore()
 
         Component.onCompleted: {
             highscore = settings.highscore;
             highTile = settings.highTile;
         }
 
-        Component.onDestruction: {
+        function saveHighscore ()
+        {
             if (scoreContain.highscore > settings.highscore)
+            {
                 settings.highscore = scoreContain.highscore;
-            if (scoreContain.highTile > settings.highTile)
                 settings.highTile = scoreContain.highTile;
+            }
         }
     }
 
@@ -90,9 +90,10 @@ Rectangle {
         id: changeTiles
 
         anchors {
-            right: scoreContain.right
+            horizontalCenter: scoreContain.right
+            horizontalCenterOffset: -scoreContain.height/8
             verticalCenter: scoreContain.verticalCenter
-            verticalCenterOffset: -scoreContain.height/6
+            verticalCenterOffset: -scoreContain.height/4
         }
 
         height: scoreContain.height/2.5
@@ -147,7 +148,7 @@ Rectangle {
         samples: 16
         smooth: true
         transparentBorder: true
-        color: "#33000000"
+        color: "#aa000000"
 
         verticalOffset: changeTiles.height/15
     }

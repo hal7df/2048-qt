@@ -17,8 +17,6 @@ Item {
         left: parent.left
     }
 
-    clip: true
-
     onScoreChanged: {
         if (score > highscore)
             highscore = score;
@@ -33,13 +31,14 @@ Item {
         id: highScoreDisplay
 
         anchors {
+            right: parent.right
             left: curScoreDisplay.right
             verticalCenter: parent.bottom
-            leftMargin: -height/5
+            leftMargin: -curScoreDisplay.width/10
+            rightMargin: parent.width/10
         }
 
-        height: parent.height*1.125
-        width: height
+        height: width
         radius: width/2
 
         color: ColorUtils.getBackgroundColor(highTile)
@@ -52,6 +51,11 @@ Item {
         transitions: Transition {
             from: ""; to: "pressed"; reversible: true
             ColorAnimation { duration: 50 }
+        }
+
+        Behavior on color {
+            enabled: state != "pressed"
+            ColorAnimation { easing.type: Easing.InOutQuad }
         }
 
         Text {
@@ -112,16 +116,16 @@ Item {
 
         scale: 1.25
 
-        color: "#33000000"
+        color: "#66000000"
     }
 
     Rectangle {
         id: curScoreDisplay
 
         anchors {
-            left: parent.left
+            right: parent.horizontalCenter
+            rightMargin: -parent.height/10
             verticalCenter: parent.verticalCenter
-            leftMargin: -width/6
         }
 
         height: parent.height*1.5
@@ -129,6 +133,10 @@ Item {
         radius: width/2
 
         color: ColorUtils.getBackgroundColor(parent.curHighTile)
+
+        Behavior on color {
+            ColorAnimation { easing.type: Easing.InOutQuad }
+        }
 
         Text {
             id: scoreText

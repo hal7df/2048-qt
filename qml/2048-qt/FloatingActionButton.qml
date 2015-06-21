@@ -10,10 +10,11 @@ Item {
     property bool small: false
     property color color: "#f44336"
     property alias enabled: fabTouch.enabled
+    property real windowHeight: Qt.platform.os == "android" ? Screen.desktopAvailableHeight : root.height
 
     signal clicked
 
-    height: small ? Screen.desktopAvailableHeight/15 : Screen.desktopAvailableHeight/10
+    height: small ? windowHeight/10 : windowHeight/7
     width: height
 
     Rectangle {

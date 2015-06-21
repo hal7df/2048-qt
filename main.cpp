@@ -10,6 +10,8 @@ int main(int argc, char *argv[])
 
     srand(time(NULL));
 
+    app.setApplicationName("2Q48");
+
     QtQuick2ApplicationViewer viewer;
     viewer.setMainQmlFile(QStringLiteral("qml/2048-qt/main.qml"));
     viewer.showExpanded();

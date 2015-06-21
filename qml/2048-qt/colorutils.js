@@ -13,35 +13,35 @@ function getBackgroundColor (value) {
     if (value == 0)  //Empty tile
         return "#00000000";
     else if ((power % 1) != 0) //Invalid tile
-        return "#ff4444"
+        return "#f44336"
     else if (power == 1)  //2
-        return "#2cb1e1";
+        return "#81d4fa";
     else if (power == 2)  //4
-        return "#16a5d7";
+        return "#03a9f4";
     else if (power == 3)  //8
-        return "#0099cc";
+        return "#0277bd";
     else if (power == 4)  //16
-        return "#c58be2";
+        return "#b39ddb";
     else if (power == 5)  //32
-        return "#ac59d6";
+        return "#7e57c2";
     else if (power == 6)  //64
-        return "#9933cc";
+        return "#512da8";
     else if (power == 7)  //128
-        return "#92c500";
+        return "#81c784";
     else if (power == 8)  //256
-        return "#7caf00";
+        return "#4caf50";
     else if (power == 9)  //512
-        return "#669900";
+        return "#388e3c";
     else if (power == 10) //1024
-        return "#ffc641";
+        return "#ffca28";
     else if (power == 11) //2048
-        return "#ffb61c";
+        return "#ffb300";
     else if (power == 12) //4096
-        return "#ffa713";
+        return "#ff9800";
     else if (power == 13) //8192
-        return "#ff9909";
+        return "#f57c00";
     else if (power >= 14) //16384+
-        return "#ff8a00";
+        return "#ff5722";
 }
 
 function getContrasting (hex)

@@ -10,6 +10,7 @@ Card {
     property int highestNumber: 2
     property bool canDecreasePower: !model.doesTileExist(goal/2)
     property bool active: !gameChangeDisplay.visible
+    property bool loss
 
     property bool useSquares
 
@@ -35,6 +36,20 @@ Card {
             goNextPower.state = "open";
     }
 
+    onRestart: {
+        var highTile, i;
+
+        highTile = 2;
+
+        for (i = 0; i < 16; i++)
+        {
+            if (gameData.get(i).value > highTile)
+                highTile = gameData.get(i).value;
+        }
+
+        highestNumber = highTile;
+    }
+
     GridView
     {
         id: playGrid
@@ -53,8 +68,6 @@ Card {
         }
 
         verticalLayoutDirection: GridView.BottomToTop
-
-        Component.onCompleted: playGrid.forceLayout()
 
         delegate: GridDelegate {
             width: playGrid.cellWidth
@@ -170,7 +183,6 @@ Card {
                 script: {
                     gameChangeDisplay.visible = false;
                     goNextPower.state = "";
-                    numberGrid.highestNumber = 2;
                 }
             }
         }
@@ -283,7 +295,6 @@ Card {
         gameData.regenerate();
         gameChangeDisplay.close();
         restart();
-        lost = false;
     }
 
     /** MOVE FUNCTIONS **/
@@ -544,6 +555,7 @@ Card {
     function afterMove ()
     {
         gameData.generate();
+        playGrid.forceLayout();
 
         var movesLeft;
         var i;
